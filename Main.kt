@@ -121,7 +121,7 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
         filters = listOf(tagIs("class", "street_limited"), tagIs("type", "pedestrian")),
         color = colors.road,
         colorOutline = colors.path,
-        width = listOf(11 to 0.5, 24 to 1024.0), // ~6m
+        width = listOf(13 to 1.5, 24 to 1024.0), // ~6m
         minZoom = 14.0
     )
     val serviceRoads = Road("roads-service",
@@ -135,28 +135,28 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
         filters = listOf(tagIn("class", "street", "street_limited"), tagIsNot("type", "pedestrian")),
         color = colors.road,
         colorOutline = colors.roadOutline,
-        width = listOf(11 to 0.5, 24 to 1024.0), // ~6m
+        width = listOf(11 to 0.5, 13 to 1.5, 24 to 1024.0), // ~6m
         minZoom = 12.0
     )
     val majorRoads = Road("roads-major",
         filters = listOf(tagIs("class", "main")),
         color = colors.road,
         colorOutline = colors.roadOutline,
-        width = listOf(9 to 1.0, 24 to 1536.0), // ~8m
+        width = listOf(9 to 1.0, 13 to 4.5, 24 to 1536.0), // ~8m
         minZoom = 5.0,
     )
     val motorways = Road("motorways",
         filters = listOf(tagIs("class", "motorway")),
         color = colors.motorway,
         colorOutline = colors.motorwayOutline,
-        width = listOf(8 to 1.0, 24 to 2048.0), // ~12m
+        width = listOf(8 to 1.0, 13 to 8.0, 24 to 2048.0), // ~12m
         minZoom = 5.0,
     )
     val motorwayLinks = Road("motorway-links",
         filters = listOf(tagIs("class", "motorway_link")),
         color = colors.motorway,
         colorOutline = colors.motorwayOutline,
-        width = listOf(11 to 0.5, 24 to 1024.0), // ~6m
+        width = listOf(11 to 1.0, 13 to 1.5, 24 to 1024.0), // ~6m
     )
 
     val roads = listOf(pedestrian, serviceRoads, minorRoads, majorRoads, motorways, motorwayLinks)
@@ -180,7 +180,7 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
         paint = Line(
             color = colors.railway,
             // at zoom 17, the line spits up into two lines, to mimic the two tracks of a railway
-            width = byZoom(12, 0.75, 16.999, 4, 17, 2, 24, 128),
+            width = byZoom(12, 0.75, 13, 2.0, 16.999, 4, 17, 2, 24, 128),
             gapWidth = byZoom(12, 0, 17, 0, 24, 256),
             join = "round",
             opacity = byZoom(12, 0, 13, 1)
@@ -205,8 +205,8 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
         minZoom = 16.0,
         paint = Line(
             color = colors.path,
-            width = byZoom(16, 1, 24, 64),
-            offset = byZoom(16, -0.5, 24, -32),
+            width = byZoom(16, 1, 24, 128),
+            offset = byZoom(16, -0.5, 24, -64),
             opacity = byZoom(16, 0, 17, 1),
             dashes = if (structure == Structure.Tunnel) "[4, 4]" else null,
         )
@@ -545,7 +545,7 @@ fun Road.toCasingLayer(structure: Structure) = Layer(
     minZoom = 15.5,
     paint = Line(
         color = colorOutline,
-        width = byZoom(16, 1, 24, 64),
+        width = byZoom(16, 1, 24, 128),
         join = "round",
         opacity = byZoom(15.5, 0, 16, 1),
         // cap must not be round for bridges so that the casing is not drawn on top of normal roads
