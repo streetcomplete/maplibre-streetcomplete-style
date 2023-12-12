@@ -28,7 +28,7 @@ val themeLight = Colors(
     onewayArrow = "#888",
 )
 
-val themeDark = Colors(
+val themeNight = Colors(
     earth = "#2e2e48",
     water = "#002",
     waterShore = "#228",
@@ -75,11 +75,11 @@ fun main(args: Array<String>) {
         colors = themeLight
     ))
 
-    File("streetcomplete-dark.json").writeText(createStyle(
-        name = "StreetComplete",
+    File("streetcomplete-night.json").writeText(createStyle(
+        name = "StreetComplete-Night",
         accessToken = accessToken,
         languages = languages,
-        colors = themeDark
+        colors = themeNight
     ))
 }
 
