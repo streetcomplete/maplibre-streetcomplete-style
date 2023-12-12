@@ -1,6 +1,6 @@
 {
   "version": 8,
-  "name": "StreetComplete",
+  "name": "StreetComplete-Night",
   "sources": {
     "jawg-streets": {
       "type": "vector",
@@ -10,6 +10,7 @@
     }
   },
   "transition": { "duration": 300, "delay": 0 },
+  "light": { "intensity": 0.2 },
   "glyphs": "https://api.jawg.io/glyphs/{fontstack}/{range}.pbf",
   "layers": [
     { "id": "background", "type": "background", "paint": {"background-color": "#2e2e48"}},

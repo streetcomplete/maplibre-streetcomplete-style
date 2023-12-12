@@ -66,8 +66,6 @@ fun main(args: Array<String>) {
     val accessToken = argMap["access_token"] ?: ""
     val languages = argMap["languages"]?.split(",") ?: emptyList()
 
-    println("Program arguments: ${args.joinToString()}")
-
     File("streetcomplete.json").writeText(createStyle(
         name = "StreetComplete",
         accessToken = accessToken,
@@ -465,14 +463,15 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
             src = "building",
             filter = listOf(tagIs("extrude", true)),
             minZoom = 15.0,
-            maxZoom = 20.0,
+            maxZoom = 19.0,
             paint = FillExtrusion(
                 color = colors.building,
                 base = """["get", "min_height"]""",
                 height = """["get", "height"]""",
-                opacity = byZoom(15, 0, 16, 0.4, 18, 0.4, 20, 0),
+                opacity = byZoom(15, 0, 16, 0.8, 18, 0.8, 19, 0),
             )
         ),
+
          */
     )
 
@@ -488,6 +487,7 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
     }
   },
   "transition": { "duration": 300, "delay": 0 },
+  "light": { "intensity": 0.2 },
   "glyphs": "https://api.jawg.io/glyphs/{fontstack}/{range}.pbf",
   "layers": [
     { "id": "background", "type": "background", "paint": {"background-color": "${colors.earth}"}},
