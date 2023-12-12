@@ -449,10 +449,23 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
             paint = defaultTextStyle.copy(wrap = 25, placement = "line-center")
         ),
 
-        Layer("labels-waterway",
+        Layer("labels-rivers",
             src = "waterway",
             minZoom = 14.0,
-            filter = listOf(tagIsNot("structure", "tunnel"), isLines),
+            filter = listOf(
+                tagIsNot("structure", "tunnel"),
+                tagIn("class", "river", "canal")
+            ),
+            paint = waterTextStyle.copy(placement = "line-center")
+        ),
+
+        Layer("labels-streams",
+            src = "waterway",
+            minZoom = 16.0,
+            filter = listOf(
+                tagIsNot("structure", "tunnel"),
+                tagIn("class", "stream", "ditch", "drain")
+            ),
             paint = waterTextStyle.copy(placement = "line-center")
         ),
 
