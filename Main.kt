@@ -299,11 +299,12 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
         Layer("water-shore-lines",
             src = "water",
             filter = listOf(tagIsNot("structure", "tunnel")),
+            minZoom = 15.0,
             paint = Line(
                 color = colors.waterShore,
-                width = byZoom(16, 4, 24, 192),
-                offset = byZoom(16, 4, 24, 192),
-                opacity = byZoom(16, 0, 19, 1),
+                width = byZoom(15, 1, 18, 4, 24, 256),
+                offset = byZoom(15, 1, 18, 4, 24, 256),
+                opacity = byZoom(15, 0, 18, 1),
                 miterLimit = 6,
                 //blur = byZoom(16, 1, 24, 256)
             )
