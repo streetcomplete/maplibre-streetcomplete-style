@@ -304,6 +304,7 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
                 width = byZoom(16, 4, 24, 192),
                 offset = byZoom(16, 4, 24, 192),
                 opacity = byZoom(16, 0, 19, 1),
+                miterLimit = 6,
                 //blur = byZoom(16, 1, 24, 256)
             )
         ),

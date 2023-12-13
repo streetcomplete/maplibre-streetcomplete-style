@@ -90,6 +90,7 @@ data class Line(
     val offset: String? = null,
     val blur: String? = null,
     val opacity: String? = null,
+    val miterLimit: Number? = null,
     val dashes: String? = null,
     val cap: String? = null,
     val join: String? = null
@@ -107,11 +108,12 @@ data class Line(
               opacity?.let   { "\"line-opacity\": $it" },
           ).joinToString() +
           "}",
-      if (cap != null || join != null) {
+      if (cap != null || join != null || miterLimit != null) {
         "\"layout\": {" +
             listOfNotNull(
                 cap?.let  { "\"line-cap\": \"$it\"" },
                 join?.let { "\"line-join\": \"$it\"" },
+                miterLimit?.let  { "\"line-miter-limit\": $it" },
             ).joinToString() +
             "}"
       } else null
