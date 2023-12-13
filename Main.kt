@@ -16,6 +16,7 @@ val themeLight = Colors(
     path = "#ca9",
     road = "#fff",
     roadOutline = "#ca9",
+    pedestrian = "#f6eee6",
     motorway = "#fa8",
     motorwayOutline = "#a88",
     text = "#124",
@@ -44,6 +45,7 @@ val themeNight = Colors(
     path = "#547",
     road = "#559",
     roadOutline = "#547",
+    pedestrian = "#554e7e",
     motorway = "#669",
     motorwayOutline = "#99f",
     text = "#ccf",
@@ -119,8 +121,8 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
     )
     val pedestrian = Road("pedestrian",
         filters = listOf(tagIs("class", "street_limited"), tagIs("type", "pedestrian")),
-        color = colors.road,
-        colorOutline = colors.path,
+        color = colors.pedestrian,
+        colorOutline = colors.roadOutline,
         width = listOf(13 to 1.5, 24 to 1024.0), // ~6m
         minZoom = 14.0
     )
@@ -166,7 +168,7 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
         src = "road",
         filter = listOf(tagIn("class", "path"), tagIn("type", "steps"), isLines, structure.filter),
         paint = Line(
-            color = colors.earth,
+            color = colors.pedestrian,
             width = byZoom(pathWidth.map { (z, w) -> z to w * 0.7 }),
             opacity = if (structure == Structure.Tunnel) "0.25" else null,
             dashes = "[0.6, 0.4]"
@@ -193,7 +195,7 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
         filter = listOf(tagIn("class", "path", "street_limited"), isPolygon, structure.filter),
         minZoom = 15.0,
         paint = Fill(
-            color = colors.road,
+            color = colors.pedestrian,
             opacity = byZoom(15, 0, 16, 1),
         )
     )
@@ -220,10 +222,10 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
 
         // , then draw the road color...
         paths.toLayer(structure), // paths do not have a casing
-        *roads.map { it.toLayer(structure) }.toTypedArray(),
         stepsOverlayLayer(structure),
-        // pedestrian area tunnels are not drawn
         if (structure != Structure.Tunnel)  pedestrianAreaLayer(structure) else null,
+        *roads.map { it.toLayer(structure) }.toTypedArray(),
+        // pedestrian area tunnels are not drawn
 
         paths.toLayerPrivateOverlay(structure, colors.privateOverlay),
         serviceRoads.toLayerPrivateOverlay(structure, colors.privateOverlay),
@@ -604,6 +606,7 @@ data class Colors(
     val path: String,
     val road: String,
     val roadOutline: String,
+    val pedestrian: String,
     val motorway: String,
     val motorwayOutline: String,
     val text: String,
