@@ -232,11 +232,15 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
 
     fun allRoadLayers(structure: Structure) = listOfNotNull(
         // for roads, first draw the casing (= outline) of all roads
+
         *roads.map { it.toCasingLayer(structure) }.toTypedArray(),
         // pedestrian area tunnels are not drawn
         if (structure != Structure.Tunnel) pedestrianAreaCasingLayer(structure) else null,
 
         // , then draw the road color...
+
+        // roads and pedestrian areas should be drawn on top of paths, as paths on
+        // these are kind of "virtual", do only exist for connectivity
         paths.toLayer(structure), // paths do not have a casing
         stepsOverlayLayer(structure),
         if (structure != Structure.Tunnel)  pedestrianAreaLayer(structure) else null,
@@ -247,6 +251,7 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
         serviceRoads.toLayerPrivateOverlay(structure, colors.privateOverlay),
 
         // railway tunnels are not drawn
+        // railways are drawn last because e.g. trams should appear on top of roads
         if (structure != Structure.Tunnel) railwayLayer(structure) else null,
     )
 
@@ -537,7 +542,6 @@ data class Road(
     val filters: List<String>,
     val color: String,
     val colorOutline: String,
-    val dashes: String? = null,
     val width: List<Pair<Number, Double>>,
     val minZoom: Double? = null,
 )
@@ -551,7 +555,6 @@ fun Road.toLayer(structure: Structure) = Layer(
         width = byZoom(width.map { (z, w) -> z to w }),
         join = "round",
         cap = "round",
-        dashes = dashes,
         opacity = when {
             structure == Structure.Tunnel -> "0.25"
             minZoom != null -> byZoom(minZoom, 0, minZoom+1, 1)
