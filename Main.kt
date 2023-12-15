@@ -569,7 +569,7 @@ fun Road.toCasingLayer(structure: Structure) = Layer(
         color = colorOutline,
         width = byZoom(16, 1, 24, 128),
         join = "round",
-        opacity = byZoom(15.5, 0, 16, 1),
+        opacity = byZoom(15.0, 0, 16, 1),
         // cap must not be round for bridges so that the casing is not drawn on top of normal roads
         cap = if (structure == Structure.None) "round" else "butt",
         dashes = if (structure == Structure.Tunnel) "[4, 4]" else null,
