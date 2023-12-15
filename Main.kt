@@ -112,6 +112,20 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
         outlineColor = colors.textWaterOutline
     )
 
+    val rivers = Waterway("rivers",
+        filters = listOf(tagIn("class", "river", "canal")),
+        color = colors.water,
+        width = listOf(10 to 1.0, 17 to 6.0, 24 to 512.0),
+        minZoom = 10.0
+    )
+
+    val streams = Waterway("streams",
+        filters = listOf(tagIn("class", "stream", "ditch", "drain")),
+        color = colors.water,
+        width = listOf(16 to 1.0, 24 to 256.0),
+        minZoom = 10.0
+    )
+
     val paths = Road("paths",
         filters = listOf(tagIs("class", "path")),
         color = colors.path,
@@ -214,6 +228,8 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
         )
     )
 
+
+
     fun allRoadLayers(structure: Structure) = listOfNotNull(
         // for roads, first draw the casing (= outline) of all roads
         *roads.map { it.toCasingLayer(structure) }.toTypedArray(),
@@ -295,12 +311,12 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
 
         Layer("water-areas",
             src = "water",
-            filter = listOf(tagIsNot("structure", "tunnel")),
+            filter = listOf(Structure.None.filter),
             paint = Fill(colors.water)
         ),
         Layer("water-shore-lines",
             src = "water",
-            filter = listOf(tagIsNot("structure", "tunnel")),
+            filter = listOf(Structure.None.filter),
             minZoom = 15.0,
             paint = Line(
                 color = colors.waterShore,
@@ -308,37 +324,10 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
                 offset = byZoom(15, 1, 18, 4, 24, 256),
                 opacity = byZoom(15, 0, 18, 1),
                 miterLimit = 6,
-                //blur = byZoom(16, 1, 24, 256)
             )
         ),
-        Layer("water-rivers",
-            src = "waterway",
-            filter = listOf(
-                tagIsNot("structure", "tunnel"),
-                tagIn("class", "river", "canal")
-            ),
-            minZoom = 10.0,
-            paint = Line(
-                color = colors.water,
-                width = byZoom(10, 1, 17, 6, 24, 512),
-                join = "round",
-                cap = "round"
-            )
-        ),
-        Layer("water-streams",
-            src = "waterway",
-            filter = listOf(
-                tagIsNot("structure", "tunnel"),
-                tagIn("class", "stream", "ditch", "drain")
-            ),
-            minZoom = 16.0,
-            paint = Line(
-                color = colors.water,
-                width = byZoom(16, 1, 24, 256),
-                join = "round",
-                cap = "round"
-            )
-        ),
+        rivers.toLayer(Structure.None),
+        streams.toLayer(Structure.None),
 
         Layer("aeroways",
             src = "aeroway",
@@ -406,6 +395,14 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
             filter = listOf(isLines, tagIs("class", "bridge")),
             paint = Line(color = colors.building, width = byZoom(16, 4, 24, 512), opacity = "0.8")
         ),
+
+        Layer("water-areas-bridge",
+            src = "water",
+            filter = listOf(Structure.Bridge.filter),
+            paint = Fill(colors.water)
+        ),
+        rivers.toLayer(Structure.Bridge),
+        streams.toLayer(Structure.Bridge),
 
         *allRoadLayers(Structure.Bridge).toTypedArray(),
 
@@ -513,6 +510,27 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
 }
 """
 }
+
+data class Waterway(
+    val id: String,
+    val filters: List<String>,
+    val color: String,
+    val width: List<Pair<Number, Double>>,
+    val minZoom: Double? = null,
+)
+
+fun Waterway.toLayer(structure: Structure) = Layer(
+    id = listOfNotNull(id, structure.id).joinToString("-"),
+    src = "waterway",
+    filter = filters + listOf(isLines, structure.filter),
+    paint = Line(
+        color = color,
+        width = byZoom(width.map { (z, w) -> z to w }),
+        join = "round",
+        cap = "round",
+        opacity = minZoom?.let { byZoom(it, 0, it+1, 1) }
+    )
+)
 
 data class Road(
     val id: String,
