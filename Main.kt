@@ -523,12 +523,12 @@ fun Waterway.toLayer(structure: Structure) = Layer(
     id = listOfNotNull(id, structure.id).joinToString("-"),
     src = "waterway",
     filter = filters + listOf(isLines, structure.filter),
+    minZoom = minZoom,
     paint = Line(
         color = color,
         width = byZoom(width.map { (z, w) -> z to w }),
         join = "round",
         cap = "round",
-        opacity = minZoom?.let { byZoom(it, 0, it+1, 1) }
     )
 )
 
