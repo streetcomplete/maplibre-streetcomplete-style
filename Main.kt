@@ -13,6 +13,7 @@ val themeLight = Colors(
     adminBoundary = "#e39",
     railway = "#99a",
     aeroway = "#fff",
+    aerowayOutline = "#ca9",
     path = "#ca9",
     road = "#fff",
     roadOutline = "#ca9",
@@ -42,6 +43,7 @@ val themeNight = Colors(
     adminBoundary = "#e72",
     railway = "#96c",
     aeroway = "#559",
+    aerowayOutline = "#547",
     path = "#547",
     road = "#559",
     roadOutline = "#547",
@@ -91,7 +93,7 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
         "[" +
         listOf(
             "\"coalesce\"",
-            *languages.map { "[\"get\", \"name_$it\"]" }.toTypedArray(),
+            *languages.map { "[\"get\", \"name:$it\"]" }.toTypedArray(),
             "[\"get\", \"name\"]"
         ).joinToString() +
         "]"
@@ -103,8 +105,7 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
         color = colors.text,
         outlineColor = colors.textOutline,
         outlineWidth =  2.5,
-        padding = 12,
-        sortKey = "[\"get\", \"scalerank\"]"
+        padding = 12
     )
 
     val waterTextStyle = defaultTextStyle.copy(
@@ -113,74 +114,95 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
     )
 
     val rivers = Waterway("rivers",
-        filters = listOf(tagIn("class", "river", "canal")),
+        filters = listOf(tagIn("kind", "river", "canal")),
         color = colors.water,
         width = listOf(10 to 1.0, 17 to 6.0, 24 to 512.0),
         minZoom = 10.0
     )
 
     val streams = Waterway("streams",
-        filters = listOf(tagIn("class", "stream", "ditch", "drain")),
+        filters = listOf(tagIn("kind", "stream", "ditch", "drain")),
         color = colors.water,
         width = listOf(16 to 1.0, 24 to 256.0),
         minZoom = 10.0
     )
 
     val paths = Road("paths",
-        filters = listOf(tagIs("class", "path")),
+        filters = listOf(tagIn("kind", "footway", "path", "steps", "cycleway")),
         color = colors.path,
         colorOutline = colors.path,
         width = pathWidth,
         minZoom = 15.0
     )
     val pedestrian = Road("pedestrian",
-        filters = listOf(tagIs("class", "street_limited"), tagIs("type", "pedestrian")),
+        filters = listOf(tagIs("kind", "pedestrian")),
         color = colors.pedestrian,
         colorOutline = colors.roadOutline,
         width = listOf(13 to 1.5, 24 to 1024.0), // ~6m
         minZoom = 14.0
     )
     val serviceRoads = Road("roads-service",
-        filters = listOf(tagIn("class", "service", "driveway")),
+        filters = listOf(tagIn("kind", "service", "track", "busway")),
         color = colors.road,
         colorOutline = colors.roadOutline,
         width = listOf(13 to 0.5, 24 to 768.0), // ~4m
         minZoom = 14.0
     )
     val minorRoads = Road("roads-minor",
-        filters = listOf(tagIn("class", "street", "street_limited"), tagIsNot("type", "pedestrian")),
+        filters = listOf(tagIn("kind", "unclassified", "residential", "living_street"),),
+        color = colors.road,
+        colorOutline = colors.roadOutline,
+        width = listOf(11 to 0.5, 13 to 1.5, 24 to 1024.0), // ~6m
+        minZoom = 12.0
+    )
+    val majorRoadLinks = Road("roads-major-links",
+        filters = listOf(
+            tagIn("kind", "trunk", "primary", "secondary", "tertiary"),
+            tagIs("link", true)
+        ),
         color = colors.road,
         colorOutline = colors.roadOutline,
         width = listOf(11 to 0.5, 13 to 1.5, 24 to 1024.0), // ~6m
         minZoom = 12.0
     )
     val majorRoads = Road("roads-major",
-        filters = listOf(tagIs("class", "main")),
+        filters = listOf(
+            tagIn("kind", "trunk", "primary", "secondary", "tertiary"),
+            tagIsNot("link", true)
+        ),
         color = colors.road,
         colorOutline = colors.roadOutline,
         width = listOf(9 to 1.0, 13 to 4.5, 24 to 1536.0), // ~8m
         minZoom = 5.0,
     )
     val motorways = Road("motorways",
-        filters = listOf(tagIs("class", "motorway")),
+        filters = listOf(tagIs("kind", "motorway"), tagIsNot("link", true)),
         color = colors.motorway,
         colorOutline = colors.motorwayOutline,
         width = listOf(8 to 1.0, 13 to 8.0, 24 to 2048.0), // ~12m
         minZoom = 5.0,
     )
     val motorwayLinks = Road("motorway-links",
-        filters = listOf(tagIs("class", "motorway_link")),
+        filters = listOf(tagIs("kind", "motorway"), tagIs("link", true)),
         color = colors.motorway,
         colorOutline = colors.motorwayOutline,
         width = listOf(11 to 1.0, 13 to 1.5, 24 to 1024.0), // ~6m
     )
+    val aeroways = Road("aeroways",
+        filters = listOf(tagIn("kind", "runway", "taxiway")),
+        color = colors.aeroway,
+        colorOutline = colors.aerowayOutline,
+        width = listOf(10 to 1.0, 24 to 8192.0), // ~48m
+    )
 
-    val roads = listOf(pedestrian, serviceRoads, minorRoads, majorRoads, motorways, motorwayLinks)
+    val roads = listOf(
+        pedestrian, serviceRoads, minorRoads, majorRoads, majorRoadLinks, motorways, motorwayLinks, aeroways
+    )
 
     fun stepsOverlayLayer(structure: Structure) = Layer(
         id = listOfNotNull("steps", structure.id).joinToString("-"),
-        src = "road",
-        filter = listOf(tagIn("class", "path"), tagIn("type", "steps"), isLines, structure.filter),
+        src = "streets",
+        filter = listOf(tagIn("kind", "steps")) + structure.filter,
         paint = Line(
             color = colors.pedestrian,
             width = byZoom(pathWidth.map { (z, w) -> z to w * 0.7 }),
@@ -189,24 +211,28 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
         )
     )
 
+    val railwayLine = Line(
+        color = colors.railway,
+        // at zoom 17, the line spits up into two lines, to mimic the two tracks of a railway
+        width = byZoom(12, 0.75, 13, 2.0, 16.999, 4, 17, 2, 24, 128),
+        gapWidth = byZoom(12, 0, 17, 0, 24, 256),
+        join = "round",
+        opacity = byZoom(12, 0, 13, 1)
+    )
+
     fun railwayLayer(structure: Structure) = Layer(
         id = listOfNotNull("railways", structure.id).joinToString("-"),
-        src = "road",
-        filter = listOf(tagIn("class", "major_rail", "minor_rail"), isLines, structure.filter),
-        paint = Line(
-            color = colors.railway,
-            // at zoom 17, the line spits up into two lines, to mimic the two tracks of a railway
-            width = byZoom(12, 0.75, 13, 2.0, 16.999, 4, 17, 2, 24, 128),
-            gapWidth = byZoom(12, 0, 17, 0, 24, 256),
-            join = "round",
-            opacity = byZoom(12, 0, 13, 1)
-        )
+        src = "streets",
+        filter = listOf(tagIn("kind",
+            "light_rail", "monorail", "rail", "subway", "tram", "bus_guideway", "funicular", "narrow_gauge",
+        )) + structure.filter,
+        paint = railwayLine
     )
 
     fun pedestrianAreaLayer(structure: Structure) = Layer(
         id = listOfNotNull("pedestrian-areas", structure.id).joinToString("-"),
-        src = "road",
-        filter = listOf(tagIn("class", "path", "street_limited"), isPolygon, structure.filter),
+        src = "street_polygons",
+        filter = listOf(tagIn("kind", "pedestrian")) + structure.filter,
         minZoom = 15.0,
         paint = Fill(
             color = colors.pedestrian,
@@ -216,8 +242,8 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
 
     fun pedestrianAreaCasingLayer(structure: Structure) = Layer(
         id = listOfNotNull("pedestrian-areas-casing", structure.id).joinToString("-"),
-        src = "road",
-        filter = listOf(tagIn("class", "path", "street_limited"), isPolygon, structure.filter),
+        src = "street_polygons",
+        filter = listOf(tagIn("kind", "pedestrian")) + structure.filter,
         minZoom = 16.0,
         paint = Line(
             color = colors.path,
@@ -227,8 +253,6 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
             dashes = if (structure == Structure.Tunnel) "[4, 4]" else null,
         )
     )
-
-
 
     fun allRoadLayers(structure: Structure) = listOfNotNull(
         // for roads, first draw the casing (= outline) of all roads
@@ -255,103 +279,95 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
         if (structure != Structure.Tunnel) railwayLayer(structure) else null,
     )
 
+    val shoreLine = Line(
+        color = colors.waterShore,
+        width = byZoom(15, 1, 18, 4, 24, 256),
+        offset = byZoom(15, 1, 18, 4, 24, 256),
+        opacity = byZoom(15, 0, 18, 1),
+        miterLimit = 6,
+    )
+
     val layers = listOf<Layer>(
 
         Layer("landuse-town",
-            src = "landuse",
-            filter = listOf(
-                tagNotIn("class", "pitch", "park", "grass", "cemetery", "wood", "scrub", "national_park")
-            ),
+            src = "land",
+            filter = listOf(tagIn("kind",
+                // town
+                "commercial", "residential", "retail",
+
+                // industrial / asphalt-desert
+                "brownfield", "farmyard", "garages", "industrial", "landfill", "quarry", "railway",
+            )),
             minZoom = 11.0,
             paint = Fill(color = colors.town, opacity = byZoom(11, 0, 12, 1))
         ),
+        Layer("landuse-sites",
+            src = "sites",
+            minZoom = 14.0,
+            paint = Fill(color = colors.town, opacity = byZoom(14, 0, 15, 1))
+        ),
         Layer("landuse-green",
-            src = "landuse",
-            filter = listOf(tagIn("class", "pitch", "park", "grass", "cemetery")),
+            src = "land",
+            filter = listOf(tagIn("kind",
+                // city green
+                "cemetery", "miniature_golf", "garden", "grass", "golf_course", "grave_yard",
+                "greenfield", "park", "playground", "recreation_ground", "village_green",
+
+                // farmland
+                "allotments", "farmland", "greenhouse_horticulture", "plant_nursery", "vineyard",
+
+                // natural
+                "bog", "grassland", "heath", "marsh", "meadow", "string_bog", "wet_meadow",
+            )),
             minZoom = 5.0,
             paint = Fill(color = colors.green, opacity = byZoom(5, 0, 6, 1))
         ),
-        Layer("landuse-pitch-outline",
-            src = "landuse",
-            filter = listOf(tagIs("class", "pitch")),
-            minZoom = 16.0,
-            paint = Line(
-                color = colors.earth,
-                width = byZoom(16, 1, 24, 128),
-                offset = byZoom(16, 0.5, 24, 64)
-            )
-        ),
         Layer("landuse-forest",
-            src = "landuse",
-            filter = listOf(tagIn("class", "wood", "scrub")),
+            src = "land",
+            filter = listOf(tagIn("kind",
+                "forest",
+                "orchard", // are usually at least small trees
+                "scrub",
+                "swamp", // forest + water = swamp
+            )),
             minZoom = 5.0,
             paint = Fill(color = colors.forest, opacity = byZoom(5, 0, 6, 1))
         ),
+        // not rendered: shingle, scree, bare_rock, sand, beach,
 
-        *(1..2).map { i ->
-            Layer("hillshade-highlight-$i",
-                src = "hillshade",
-                filter = listOf(tagIs("highlight", i)),
-                maxZoom = 16.0,
-                paint = Fill(
-                    color = colors.hillshadeLight,
-                    antialias = false,
-                    opacity = byZoom(12, 0.12, 16, 0)
-                )
-            )
-        }.toTypedArray(),
-
-        *(1..4).map { i ->
-            Layer("hillshade-shadow-$i",
-                src = "hillshade",
-                filter = listOf(tagIs("shadow", i)),
-                maxZoom = 16.0,
-                paint = Fill(
-                    color = colors.hillshadeShadow,
-                    antialias = false,
-                    opacity = byZoom(12, 0.05, 16, 0)
-                )
-            )
-        }.toTypedArray(),
-
-        Layer("water-areas",
-            src = "water",
-            filter = listOf(Structure.None.filter),
+        Layer("oceans",
+            src = "ocean",
             paint = Fill(colors.water)
         ),
-        Layer("water-shore-lines",
-            src = "water",
-            filter = listOf(Structure.None.filter),
+        Layer("water-areas",
+            src = "water_polygons",
+            filter = listOf(tagNotIn("kind", "glacier")) + Structure.None.filter,
+            paint = Fill(colors.water)
+        ),
+        Layer("ocean-shore-lines",
+            src = "ocean",
             minZoom = 15.0,
-            paint = Line(
-                color = colors.waterShore,
-                width = byZoom(15, 1, 18, 4, 24, 256),
-                offset = byZoom(15, 1, 18, 4, 24, 256),
-                opacity = byZoom(15, 0, 18, 1),
-                miterLimit = 6,
-            )
+            paint = shoreLine
+        ),
+        Layer("water-shore-lines",
+            src = "water_polygons",
+            filter = listOf(tagNotIn("kind", "glacier")) + Structure.None.filter,
+            minZoom = 15.0,
+            paint = shoreLine
         ),
         rivers.toLayer(Structure.None),
         streams.toLayer(Structure.None),
 
-        Layer("aeroways",
-            src = "aeroway",
-            filter = listOf(isLines),
-            paint = Line(
-                color = colors.aeroway,
-                width = byZoom(10, 1, 24, 8192),
-                join = "round"
-            )
-        ),
+        // TODO piers
 
         Layer("buildings",
-            src = "building",
+            src = "buildings",
             minZoom = 15.0,
             paint = Fill(color = colors.building, opacity = byZoom(15, 0, 16, 1))
         ),
 
         Layer("buildings-outline",
-            src = "building",
+            src = "buildings",
             minZoom = 15.5,
             paint = Line(
                 color = colors.buildingOutline,
@@ -359,51 +375,29 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
                 opacity = byZoom(15.5, 0, 16.0, 1)
             )
         ),
+        // TODO dam_polygons
 
         *allRoadLayers(Structure.Tunnel).toTypedArray(),
 
         *allRoadLayers(Structure.None).toTypedArray(),
 
-        Layer("barriers-large",
-            src = "structure",
-            filter = listOf(tagIn("type", "city_wall", "dam", "cliff")),
+        Layer("dam-lines",
+            src = "dam_lines",
             minZoom = 16.0,
             paint = Line(width = byZoom(16, 4, 24, 768), color = colors.buildingOutline)
         ),
-        Layer("barriers-wall",
-            src = "structure",
-            filter = listOf(tagIs("class", "fence"), tagIsNot("type", "city_wall")),
-            minZoom = 16.0,
-            paint = Line(width = byZoom(16, 1, 24, 256), color = colors.buildingOutline)
-        ),
-        Layer("barriers-hedges",
-            src = "structure",
-            filter = listOf(tagIs("class", "hedge")),
-            minZoom = 16.0,
-            paint = Line(width = byZoom(16, 1, 24, 512), color = colors.forest)
-        ),
-
-        Layer("point-barriers",
-            src = "structure",
-            filter = listOf(isPoint),
-            minZoom = 17.0,
-            paint = Circle(color = colors.pointBarrier, radius = byZoom(17, 2, 24, 256))
-        ),
+        // shortbread v1 doesn't have any "barrier"s. If it had, they would go here
+        // (wall, fence, city_wall, cliffs, retaining walls, bollard ...)
 
         Layer("bridge-areas",
-            src = "structure",
-            filter = listOf(isPolygon, tagIs("class", "bridge")),
+            src = "bridges",
+            filter = listOf(isPolygon),
             paint = Fill(color = colors.building, opacity = "0.8")
-        ),
-        Layer("bridge-lines",
-            src = "structure",
-            filter = listOf(isLines, tagIs("class", "bridge")),
-            paint = Line(color = colors.building, width = byZoom(16, 4, 24, 512), opacity = "0.8")
         ),
 
         Layer("water-areas-bridge",
-            src = "water",
-            filter = listOf(Structure.Bridge.filter),
+            src = "water_polygons",
+            filter = listOf(tagNotIn("kind", "glacier")) + Structure.Bridge.filter,
             paint = Fill(colors.water)
         ),
         rivers.toLayer(Structure.Bridge),
@@ -411,9 +405,14 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
 
         *allRoadLayers(Structure.Bridge).toTypedArray(),
 
+        Layer("aerialways",
+            src = "aerialways",
+            paint = railwayLine
+        ),
+
         Layer("oneway-arrows",
-            src = "road",
-            filter = listOf(isLines, tagIs("oneway", true)),
+            src = "streets",
+            filter = listOf(tagIs("oneway", true)),
             minZoom = 16.0,
             paint = Symbol(
                 image = "oneway",
@@ -425,89 +424,79 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
         ),
 
         Layer("boundaries",
-            src = "admin",
+            src = "boundaries",
             filter = listOf(tagIs("admin_level", 2), tagIsNot("maritime", true)),
             paint = Line(color = colors.adminBoundary, width = "1", dashes = "[1, 2]")
         ),
 
         Layer("labels-country",
-            src = "place_label",
-            filter = listOf(tagIs("class", "country")),
+            src = "boundary_labels",
+            filter = listOf(tagIs("admin_level", 2)),
             paint = defaultTextStyle.copy(fonts = listOf("Roboto Bold", "Noto Bold"))
         ),
 
         Layer("labels-localities",
-            src = "place_label",
-            filter = listOf(tagIs("class", "locality")),
+            src = "place_labels",
             paint = defaultTextStyle
         ),
 
         Layer("labels-housenumbers",
-            src = "housenum_label",
+            src = "addresses",
             minZoom = 19.0,
-            paint = defaultTextStyle.copy(text = "[\"get\", \"house_num\"]")
+            paint = defaultTextStyle.copy(text =
+                """["coalesce", ["get", "housenumber"], ["get", "housename"]]"""
+            )
         ),
 
         Layer("labels-road",
-            src = "road",
+            src = "street_labels",
             minZoom = 14.0,
-            filter = listOf(isLines),
             paint = defaultTextStyle.copy(wrap = 25, placement = "line-center")
         ),
 
+        Layer("labels-road-areas",
+            src = "streets_polygons_labels",
+            minZoom = 14.0,
+            paint = defaultTextStyle
+        ),
+
         Layer("labels-rivers",
-            src = "waterway",
+            src = "water_lines_labels",
             minZoom = 14.0,
             filter = listOf(
-                tagIsNot("structure", "tunnel"),
-                tagIn("class", "river", "canal")
+                tagIsNot("tunnel", true),
+                tagIn("kind", "river", "canal")
             ),
             paint = waterTextStyle.copy(placement = "line-center")
         ),
 
         Layer("labels-streams",
-            src = "waterway",
+            src = "water_lines_labels",
             minZoom = 16.0,
             filter = listOf(
-                tagIsNot("structure", "tunnel"),
-                tagIn("class", "stream", "ditch", "drain")
+                tagIsNot("tunnel", true),
+                tagIn("kind", "stream", "ditch", "drain")
             ),
             paint = waterTextStyle.copy(placement = "line-center")
         ),
 
-        /*
-        // I don't know, kind of does not look good. Maybe it would look better if roofs were rendered?
-
-        Layer("buildings-extrude",
-            src = "building",
-            filter = listOf(tagIs("extrude", true)),
-            minZoom = 15.0,
-            maxZoom = 19.0,
-            paint = FillExtrusion(
-                color = colors.building,
-                base = """["get", "min_height"]""",
-                height = """["get", "height"]""",
-                opacity = byZoom(15, 0, 16, 0.8, 18, 0.8, 19, 0),
-            )
-        ),
-
-         */
     )
 
     return """{
   "version": 8,
   "name": "$name",
   "sources": {
-    "jawg-streets": {
+    "shortbread-v1": {
       "type": "vector",
-      "tiles": ["https://tile.jawg.io/streets-v2+hillshade-v1/{z}/{x}/{y}.pbf?access-token=$accessToken"],
-      "attribution": "<a href='https://www.openstreetmap.org/copyright' title='OpenStreetMap is open data licensed under ODbL' target='_blank' class='osm-attrib'>&copy; OSM contributors</a> | <a href='https://jawg.io?utm_medium=map&utm_source=attribution' title='Tiles Courtesy of Jawg Maps' target='_blank' class='jawg-attrib'>&copy; <b>Jawg</b>Maps</a>",
+      "url": "https://demo.tilekiln.xyz/shortbread_v1/tilejson.json",
+      "attribution": "<a href='https://www.openstreetmap.org/copyright' title='OpenStreetMap is open data licensed under ODbL' target='_blank' class='osm-attrib'>&copy; OSM contributors</a>",
       "maxzoom": 16
     }
   },
   "transition": { "duration": 300, "delay": 0 },
   "light": { "intensity": 0.2 },
-  "glyphs": "https://api.jawg.io/glyphs/{fontstack}/{range}.pbf",
+  "glyphs": "https://tiles.versatiles.org/assets/fonts/{fontstack}/{range}.pbf",
+  "sprite": "https://tiles.versatiles.org/sprites/sprites",
   "layers": [
     { "id": "background", "type": "background", "paint": {"background-color": "${colors.earth}"}},
     ${layers.joinToString(",\n") { it.toJson() }}
@@ -526,8 +515,8 @@ data class Waterway(
 
 fun Waterway.toLayer(structure: Structure) = Layer(
     id = listOfNotNull(id, structure.id).joinToString("-"),
-    src = "waterway",
-    filter = filters + listOf(isLines, structure.filter),
+    src = "water_lines",
+    filter = filters + structure.filter,
     minZoom = minZoom,
     paint = Line(
         color = color,
@@ -548,8 +537,8 @@ data class Road(
 
 fun Road.toLayer(structure: Structure) = Layer(
     id = listOfNotNull(id, structure.id).joinToString("-"),
-    src = "road",
-    filter = filters + listOf(isLines, structure.filter),
+    src = "streets",
+    filter = filters + structure.filter,
     paint = Line(
         color = color,
         width = byZoom(width.map { (z, w) -> z to w }),
@@ -565,8 +554,8 @@ fun Road.toLayer(structure: Structure) = Layer(
 
 fun Road.toCasingLayer(structure: Structure) = Layer(
     id = listOfNotNull(id, structure.id, "casing").joinToString("-"),
-    src = "road",
-    filter = filters + listOf(isLines, structure.filter),
+    src = "streets",
+    filter = filters + structure.filter,
     minZoom = 15.5,
     paint = Line(
         color = colorOutline,
@@ -582,11 +571,9 @@ fun Road.toCasingLayer(structure: Structure) = Layer(
 
 fun Road.toLayerPrivateOverlay(structure: Structure, privateColor: String) = Layer(
     id = listOfNotNull(id, structure.id, "private").joinToString("-"),
-    src = "road",
-    filter = filters + listOf(
-        isLines,
+    src = "streets",
+    filter = filters + structure.filter + listOf(
         tagIn("access", "no", "private", "destination", "customers", "delivery", "agricultural", "forestry", "emergency"),
-        structure.filter
     ),
     paint = Line(
         color = privateColor,
@@ -599,10 +586,10 @@ fun Road.toLayerPrivateOverlay(structure: Structure, privateColor: String) = Lay
 
 enum class Structure { Bridge, Tunnel, None }
 
-val Structure.filter get() = when (this) {
-    Structure.Bridge -> tagIs("structure", "bridge")
-    Structure.Tunnel -> tagIs("structure", "tunnel")
-    Structure.None -> tagNotIn("structure", "bridge", "tunnel")
+val Structure.filter: List<String> get() = when (this) {
+    Structure.Bridge -> listOf(tagIs("bridge", true))
+    Structure.Tunnel -> listOf(tagIs("tunnel", true))
+    Structure.None -> listOf(tagIsNot("bridge", true), tagIsNot("tunnel", true))
 }
 
 val Structure.id get() = when (this) {
@@ -624,6 +611,7 @@ data class Colors(
     val adminBoundary: String,
     val railway: String,
     val aeroway: String,
+    val aerowayOutline: String,
     val path: String,
     val road: String,
     val roadOutline: String,

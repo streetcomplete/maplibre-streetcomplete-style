@@ -29,7 +29,7 @@ data class Layer(
   fun toJson() = "{ " +
       listOfNotNull(
           "\"id\": \"$id\"",
-          "\"source\": \"jawg-streets\"",
+          "\"source\": \"shortbread-v1\"",
           "\"source-layer\": \"$src\"",
           minZoom?.let { "\"minzoom\": $it" },
           maxZoom?.let { "\"maxzoom\": $it" },
