@@ -320,7 +320,7 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
                 "bog", "grassland", "heath", "marsh", "meadow", "string_bog", "wet_meadow",
             )),
             minZoom = 5.0,
-            paint = Fill(color = colors.green, opacity = byZoom(5, 0, 6, 1))
+            paint = Fill(color = colors.green, opacity = byZoom(11, 0, 12, 1))
         ),
         Layer("landuse-forest",
             src = "land",
@@ -331,7 +331,7 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
                 "swamp", // forest + water = swamp
             )),
             minZoom = 5.0,
-            paint = Fill(color = colors.forest, opacity = byZoom(5, 0, 6, 1))
+            paint = Fill(color = colors.forest, opacity = byZoom(7, 0, 8, 1))
         ),
         // not rendered: shingle, scree, bare_rock, sand, beach,
 
