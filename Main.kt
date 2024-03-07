@@ -529,7 +529,7 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
   "sprite": "https://tiles.versatiles.org/sprites/sprites",
   "layers": [
     { "id": "background", "type": "background", "paint": {"background-color": "${colors.earth}"}},
-    ${layers.joinToString(",\n") { it.toJson() }}
+    ${layers.joinToString(",\n    ") { it.toJson() }}
   ]
 }
 """
