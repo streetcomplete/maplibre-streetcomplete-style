@@ -167,7 +167,7 @@ data class Text(
     val text: String,
     val size: String,
     val color: String,
-    val fonts: List<String>,
+    val fonts: List<String>? = null,
     val wrap: Number? = null,
     val padding: Number? = null,
     val outlineColor: String? = null,
@@ -190,7 +190,7 @@ data class Text(
           listOfNotNull(
               "\"text-field\": $text",
               "\"text-size\": $size",
-              "\"text-font\": [${fonts.joinToString { "\"$it\""}}]",
+              fonts?.joinToString(transform = { "\"$it\"" })?.let { "\"text-font\": [$it]" },
               placement?.let { "\"symbol-placement\": \"$it\"" },
               padding?.let { "\"text-padding\": $it" },
               wrap?.let { "\"text-max-width\": $it" },

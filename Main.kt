@@ -101,7 +101,7 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
     val defaultTextStyle = Text(
         text = coalesceName(),
         size = byZoom(1, 13, 24, 64),
-        fonts = listOf("Roboto Regular", "Noto Regular"),
+        fonts = listOf("Noto Sans Regular"),
         color = colors.text,
         outlineColor = colors.textOutline,
         outlineWidth =  2.5,
@@ -464,7 +464,7 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
         Layer("labels-country",
             src = "boundary_labels",
             filter = listOf(tagIs("admin_level", 2)),
-            paint = defaultTextStyle.copy(fonts = listOf("Roboto Bold", "Noto Bold"))
+            paint = defaultTextStyle.copy(fonts = listOf("Noto Sans Bold"))
         ),
 
         Layer("labels-localities",
@@ -520,14 +520,12 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
   "sources": {
     "shortbread-v1": {
       "type": "vector",
-      "url": "https://demo.tilekiln.xyz/shortbread_v1/tilejson.json",
-      "attribution": "<a href='https://www.openstreetmap.org/copyright' title='OpenStreetMap is open data licensed under ODbL' target='_blank' class='osm-attrib'>&copy; OSM contributors</a>",
-      "maxzoom": 16
+      "url": "https://demo.tilekiln.xyz/shortbread_v1/tilejson.json"
     }
   },
   "transition": { "duration": 300, "delay": 0 },
   "light": { "intensity": 0.2 },
-  "glyphs": "https://tiles.versatiles.org/assets/fonts/{fontstack}/{range}.pbf",
+  "glyphs": "https://tiles.versatiles.org/fonts/{fontstack}/{range}.pbf",
   "sprite": "https://tiles.versatiles.org/sprites/sprites",
   "layers": [
     { "id": "background", "type": "background", "paint": {"background-color": "${colors.earth}"}},
