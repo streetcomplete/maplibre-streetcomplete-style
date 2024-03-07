@@ -358,12 +358,25 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
         rivers.toLayer(Structure.None),
         streams.toLayer(Structure.None),
 
-        // TODO piers
+        Layer("pier-lines",
+            src = "pier_lines",
+            paint = Line(
+                color = colors.earth,
+                width = byZoom(14, 1, 24, 768)
+            )
+        ),
+        Layer("pier-areas",
+            src = "pier_polygons",
+            paint = Fill(colors.earth)
+        ),
 
         Layer("buildings",
             src = "buildings",
             minZoom = 15.0,
-            paint = Fill(color = colors.building, opacity = byZoom(15, 0, 16, 1))
+            paint = Fill(
+                color = colors.building,
+                opacity = byZoom(15, 0, 16, 1)
+            )
         ),
 
         Layer("buildings-outline",
@@ -375,17 +388,36 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
                 opacity = byZoom(15.5, 0, 16.0, 1)
             )
         ),
-        // TODO dam_polygons
-
-        *allRoadLayers(Structure.Tunnel).toTypedArray(),
-
-        *allRoadLayers(Structure.None).toTypedArray(),
 
         Layer("dam-lines",
             src = "dam_lines",
             minZoom = 16.0,
             paint = Line(width = byZoom(16, 4, 24, 768), color = colors.buildingOutline)
         ),
+
+        Layer("dam-areas",
+            src = "dam_polygons",
+            minZoom = 14.0,
+            paint = Fill(
+                color = colors.building,
+                opacity = byZoom(14, 0, 15, 1)
+            )
+        ),
+        Layer("dam-areas-outline",
+            src = "dam_polygons",
+            minZoom = 14.0,
+            paint = Line(
+                color = colors.buildingOutline,
+                width = byZoom(16, 1, 24, 128),
+                opacity = byZoom(14.0, 0, 14.5, 1)
+            )
+        ),
+
+        *allRoadLayers(Structure.Tunnel).toTypedArray(),
+
+        *allRoadLayers(Structure.None).toTypedArray(),
+
+
         // shortbread v1 doesn't have any "barrier"s. If it had, they would go here
         // (wall, fence, city_wall, cliffs, retaining walls, bollard ...)
 
