@@ -510,7 +510,7 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
   "glyphs": "https://api.jawg.io/glyphs/{fontstack}/{range}.pbf",
   "layers": [
     { "id": "background", "type": "background", "paint": {"background-color": "${colors.earth}"}},
-    ${layers.joinToString(",\n") { it.toJson() }}
+    ${layers.joinToString(",\n    ") { it.toJson() }}
   ]
 }
 """
