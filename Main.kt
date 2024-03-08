@@ -128,7 +128,7 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
     )
 
     val paths = Road("paths",
-        filters = listOf(tagIn("kind", "footway", "path", "steps", "cycleway")),
+        filters = listOf(tagIn("kind", "footway", "path", "steps", "cycleway", "bridleway")),
         color = colors.path,
         colorOutline = colors.path,
         width = pathWidth,
