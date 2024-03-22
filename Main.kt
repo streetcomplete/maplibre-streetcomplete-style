@@ -68,14 +68,14 @@ fun main(args: Array<String>) {
     val accessToken = argMap["access_token"] ?: ""
     val languages = argMap["languages"]?.split(",") ?: emptyList()
 
-    File("streetcomplete.json").writeText(createStyle(
+    File("demo/streetcomplete.json").writeText(createStyle(
         name = "StreetComplete",
         accessToken = accessToken,
         languages = languages,
         colors = themeLight
     ))
 
-    File("streetcomplete-night.json").writeText(createStyle(
+    File("demo/streetcomplete-night.json").writeText(createStyle(
         name = "StreetComplete-Night",
         accessToken = accessToken,
         languages = languages,
@@ -85,7 +85,7 @@ fun main(args: Array<String>) {
 
 fun createStyle(name: String, accessToken: String, languages: List<String>, colors: Colors): String {
 
-    val pathWidth = listOf(14 to 0.5, 17 to 3.0, 24 to 384.0)  // ~1m
+    val pathWidth = listOf(14 to 0.5, 15.5 to 1.0, 24.5 to 512.0)  // ~1m
 
     fun coalesceName() =
         "[" +
@@ -102,7 +102,7 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
         fonts = listOf("Roboto Regular", "Noto Regular"),
         color = colors.text,
         outlineColor = colors.textOutline,
-        outlineWidth =  2.5,
+        outlineWidth = 2.5,
         padding = 12,
         sortKey = "[\"get\", \"scalerank\"]"
     )
@@ -115,14 +115,14 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
     val rivers = Waterway("rivers",
         filters = listOf(tagIn("class", "river", "canal")),
         color = colors.water,
-        width = listOf(10 to 1.0, 17 to 6.0, 24 to 512.0),
+        width = listOf(10 to 1.0, 15.5 to 3.0, 24.5 to 1536.0),
         minZoom = 10.0
     )
 
     val streams = Waterway("streams",
         filters = listOf(tagIn("class", "stream", "ditch", "drain")),
         color = colors.water,
-        width = listOf(16 to 1.0, 24 to 256.0),
+        width = listOf(15.5 to 1.0, 24.5 to 512.0),
         minZoom = 10.0
     )
 
@@ -137,42 +137,42 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
         filters = listOf(tagIs("class", "street_limited"), tagIs("type", "pedestrian")),
         color = colors.pedestrian,
         colorOutline = colors.roadOutline,
-        width = listOf(13 to 1.5, 17 to 8.0, 24 to 1024.0), // ~6m
+        width = listOf(13 to 1.5, 15.5 to 4.0, 24 to 2048.0), // ~4m
         minZoom = 14.0
     )
     val serviceRoads = Road("roads-service",
         filters = listOf(tagIn("class", "service", "driveway")),
         color = colors.road,
         colorOutline = colors.roadOutline,
-        width = listOf(13 to 0.5, 17 to 6.0, 24 to 768.0), // ~4m
+        width = listOf(13 to 0.5, 15.5 to 3.0, 24.5 to 1536.0), // ~3m
         minZoom = 14.0
     )
     val minorRoads = Road("roads-minor",
         filters = listOf(tagIn("class", "street", "street_limited"), tagIsNot("type", "pedestrian")),
         color = colors.road,
         colorOutline = colors.roadOutline,
-        width = listOf(11 to 0.5, 17 to 8.0, 24 to 1024.0), // ~6m
+        width = listOf(11 to 0.5, 15.5 to 4.0, 24.5 to 2048.0), // ~4m
         minZoom = 12.0
     )
     val majorRoads = Road("roads-major",
         filters = listOf(tagIs("class", "main")),
         color = colors.road,
         colorOutline = colors.roadOutline,
-        width = listOf(9 to 1.0, 17 to 12.0, 24 to 1536.0), // ~8m
+        width = listOf(9 to 1.0, 15.5 to 6.0, 24.5 to 3072.0), // ~6m
         minZoom = 5.0,
     )
     val motorways = Road("motorways",
         filters = listOf(tagIs("class", "motorway")),
         color = colors.motorway,
         colorOutline = colors.motorwayOutline,
-        width = listOf(8 to 1.0, 17 to 16.0, 24 to 2048.0), // ~12m
+        width = listOf(8 to 1.0, 15.5 to 8.0, 24.5 to 4048.0), // ~8m
         minZoom = 5.0,
     )
     val motorwayLinks = Road("motorway-links",
         filters = listOf(tagIs("class", "motorway_link")),
         color = colors.motorway,
         colorOutline = colors.motorwayOutline,
-        width = listOf(11 to 1.0, 17 to 8.0, 24 to 1024.0), // ~6m
+        width = listOf(11 to 1.0, 15.5 to 4.0, 24.5 to 2024.0), // ~4m
     )
 
     val roads = listOf(pedestrian, serviceRoads, minorRoads, majorRoads, motorways, motorwayLinks)
