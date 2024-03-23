@@ -1,13 +1,13 @@
-
 val isPoint = """["==", ["geometry-type"], "Point"]"""
 val isLines = """["==", ["geometry-type"], "LineString"]"""
 val isPolygon = """["==", ["geometry-type"], "Polygon"]"""
 
-fun byZoom(vararg n: Number) =
-    """["interpolate", ["exponential", 2], ["zoom"], ${n.joinToString()}]"""
+fun byZoom(vararg n: Pair<Double, Double>): String = byZoom(n.toList())
 
-fun byZoom(n: List<Pair<Number, Number>>) =
-    byZoom(*n.flatMap { (z,w) -> sequenceOf(z,w) }.toTypedArray())
+fun byZoom(n: Iterable<Pair<Double, Double>>): String {
+    val values = n.flatMap { (z, v) -> listOf(z, v) }.joinToString()
+    return """["interpolate", ["exponential", 2], ["zoom"], $values]"""
+}
 
 fun tagIs(key: String, value: Any) = """["==", ["get", "$key"], ${ if (value is String) "\"$value\"" else value }]"""
 fun tagIsNot(key: String, value: Any) = """["!=", ["get", "$key"], ${ if (value is String) "\"$value\"" else value }]"""
