@@ -414,13 +414,16 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
         Layer("oneway-arrows",
             src = "road",
             filter = listOf(isLines, tagIs("oneway", true)),
-            minZoom = 16.0,
+            minZoom = 17.0,
             paint = Symbol(
-                image = "oneway",
+                image = "oneway-arrow",
+                size = byZoom(17.0 to 0.25, 24.0 to 16.0),
                 color = colors.onewayArrow,
                 padding = 5,
                 placement = "line",
-                spacing = 200
+                spacing = byZoom(17.0 to 200.0, 24.0 to 25600.0),
+                rotate = 90,
+                rotationAlignment = "map"
             )
         ),
 
@@ -508,6 +511,7 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
   "transition": { "duration": 300, "delay": 0 },
   "light": { "intensity": 0.2 },
   "glyphs": "https://api.jawg.io/glyphs/{fontstack}/{range}.pbf",
+  "sprite": "https://streetcomplete.app/map-jawg/sprites",
   "layers": [
     { "id": "background", "type": "background", "paint": {"background-color": "${colors.earth}"}},
     ${layers.joinToString(",\n    ") { it.toJson() }}

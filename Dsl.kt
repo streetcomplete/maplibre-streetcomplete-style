@@ -141,8 +141,11 @@ data class Symbol(
     val color: String? = null,
     val padding: Number? = null,
     val placement: String? = null,
-    val spacing: Number? = null,
+    val spacing: String? = null,
     val opacity: String? = null,
+    val size: String? = null,
+    val rotate: Number? = null,
+    val rotationAlignment: String? = null,
 ) : Paint {
   override fun toJson() = listOfNotNull(
       "\"type\": \"symbol\"",
@@ -155,9 +158,12 @@ data class Symbol(
       "\"layout\": {" +
           listOfNotNull(
               "\"icon-image\": \"$image\"",
+              size?.let { "\"icon-size\": $it" },
               spacing?.let { "\"symbol-spacing\": $it" },
               placement?.let { "\"symbol-placement\": \"$it\"" },
               padding?.let { "\"icon-padding\": $it" },
+              rotate?.let { "\"icon-rotate\": $it"  },
+              rotationAlignment?.let { "\"icon-rotation-alignment\": \"$it\""  },
           ).joinToString() +
           "}",
   ).joinToString()
