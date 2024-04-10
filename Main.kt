@@ -87,7 +87,7 @@ fun main(args: Array<String>) {
 
 fun createStyle(name: String, accessToken: String, languages: List<String>, colors: Colors): String {
 
-    val pathWidth = listOf(14 to 0.5, 15.5 to 1.0, 24.5 to 512.0)  // ~1m
+    val pathWidth = listOf(14.0 to 0.5, 16.0 to 1.0, 24.0 to 256.0)  // ~1m
 
     fun coalesceName() =
         "[" +
@@ -100,7 +100,7 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
 
     val defaultTextStyle = Text(
         text = coalesceName(),
-        size = byZoom(1, 13, 24, 64),
+        size = byZoom(1.0 to 13.0, 24.0 to 64.0),
         fonts = listOf("Noto Sans Regular"),
         color = colors.text,
         outlineColor = colors.textOutline,
@@ -116,14 +116,14 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
     val rivers = Waterway("rivers",
         filters = listOf(tagIn("kind", "river", "canal")),
         color = colors.water,
-        width = listOf(10 to 1.0, 15.5 to 3.0, 24.5 to 1536.0),
+        width = listOf(10.0 to 1.0, 16.0 to 3.0, 24.0 to 768.0),
         minZoom = 10.0
     )
 
     val streams = Waterway("streams",
         filters = listOf(tagIn("kind", "stream", "ditch", "drain")),
         color = colors.water,
-        width = listOf(15.5 to 1.0, 24.5 to 512.0),
+        width = listOf(16.0 to 1.0, 24.0 to 256.0),
         minZoom = 10.0
     )
 
@@ -138,21 +138,21 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
         filters = listOf(tagIs("kind", "pedestrian")),
         color = colors.pedestrian,
         colorOutline = colors.roadOutline,
-        width = listOf(13 to 1.5, 15.5 to 4.0, 24 to 2048.0), // ~4m
+        width = listOf(13.0 to 1.5, 16.0 to 4.0, 24.0 to 1024.0), // ~4m
         minZoom = 14.0
     )
     val serviceRoads = Road("roads-service",
         filters = listOf(tagIn("kind", "service", "track", "busway")),
         color = colors.road,
         colorOutline = colors.roadOutline,
-        width = listOf(13 to 0.5, 15.5 to 3.0, 24.5 to 1536.0), // ~3m
+        width = listOf(13.0 to 0.5, 16.0 to 3.0, 24.0 to 768.0), // ~3m
         minZoom = 14.0
     )
     val minorRoads = Road("roads-minor",
         filters = listOf(tagIn("kind", "unclassified", "residential", "living_street"),),
         color = colors.road,
         colorOutline = colors.roadOutline,
-        width = listOf(11 to 0.5, 15.5 to 4.0, 24.5 to 2048.0), // ~4m
+        width = listOf(11.0 to 0.5, 16.0 to 4.0, 24.0 to 1024.0), // ~4m
         minZoom = 12.0
     )
     val majorRoadLinks = Road("roads-major-links",
@@ -162,7 +162,7 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
         ),
         color = colors.road,
         colorOutline = colors.roadOutline,
-        width = listOf(11 to 0.5, 17 to 8.0, 24 to 1024.0), // ~6m
+        width = listOf(11.0 to 0.5, 17.0 to 8.0, 24.0 to 1024.0), // ~6m
         minZoom = 12.0
     )
     val majorRoads = Road("roads-major",
@@ -172,27 +172,27 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
         ),
         color = colors.road,
         colorOutline = colors.roadOutline,
-        width = listOf(9 to 1.0, 15.5 to 6.0, 24.5 to 3072.0), // ~6m
+        width = listOf(9.0 to 1.0, 16.0 to 6.0, 24.0 to 1536.0), // ~6m
         minZoom = 5.0,
     )
     val motorways = Road("motorways",
         filters = listOf(tagIs("kind", "motorway"), tagIsNot("link", true)),
         color = colors.motorway,
         colorOutline = colors.motorwayOutline,
-        width = listOf(8 to 1.0, 15.5 to 8.0, 24.5 to 4048.0), // ~8m
+        width = listOf(8.0 to 1.0, 16.0 to 8.0, 24.0 to 2048.0), // ~8m
         minZoom = 5.0,
     )
     val motorwayLinks = Road("motorway-links",
         filters = listOf(tagIs("kind", "motorway"), tagIs("link", true)),
         color = colors.motorway,
         colorOutline = colors.motorwayOutline,
-        width = listOf(11 to 1.0, 15.5 to 4.0, 24.5 to 2024.0), // ~4m
+        width = listOf(11.0 to 1.0, 16.0 to 4.0, 24.0 to 1024.0), // ~4m
     )
     val aeroways = Road("aeroways",
         filters = listOf(tagIn("kind", "runway", "taxiway")),
         color = colors.aeroway,
         colorOutline = colors.aerowayOutline,
-        width = listOf(10 to 1.0, 24 to 8192.0), // ~48m
+        width = listOf(10.0 to 1.0, 24.0 to 8192.0), // ~48m
     )
 
     val roads = listOf(
@@ -214,10 +214,10 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
     val railwayLine = Line(
         color = colors.railway,
         // at zoom 17, the line spits up into two lines, to mimic the two tracks of a railway
-        width = byZoom(12, 0.75, 13, 2.0, 16.999, 4, 17, 2, 24, 128),
-        gapWidth = byZoom(12, 0, 17, 0, 24, 256),
+        width = byZoom(12.0 to 0.75, 13.0 to 2.0, 16.999 to 4.0, 17.0 to 2.0, 24.0 to 128.0),
+        gapWidth = byZoom(12.0 to 0.0, 17.0 to 0.0, 24.0 to 256.0),
         join = "round",
-        opacity = byZoom(12, 0, 13, 1)
+        opacity = byZoom(12.0 to 0.0, 13.0 to 1.0)
     )
 
     fun railwayLayer(structure: Structure) = Layer(
@@ -236,7 +236,7 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
         minZoom = 15.0,
         paint = Fill(
             color = colors.pedestrian,
-            opacity = byZoom(15, 0, 16, 1),
+            opacity = byZoom(15.0 to 0.0, 16.0 to 1.0),
         )
     )
 
@@ -247,9 +247,9 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
         minZoom = 16.0,
         paint = Line(
             color = colors.path,
-            width = byZoom(16, 1, 24, 128),
-            offset = byZoom(16, -0.5, 24, -64),
-            opacity = byZoom(16, 0, 17, 1),
+            width = byZoom(16.0 to 1.0, 24.0 to 128.0),
+            offset = byZoom(16.0 to -0.5, 24.0 to -64.0),
+            opacity = byZoom(16.0 to 0.0, 17.0 to 1.0),
             dashes = if (structure == Structure.Tunnel) "[4, 4]" else null,
         )
     )
@@ -299,7 +299,7 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
                 "brownfield", "farmyard", "garages", "industrial", "landfill", "quarry", "railway",
             )),
             minZoom = 11.0,
-            paint = Fill(color = colors.town, opacity = byZoom(11, 0, 12, 1))
+            paint = Fill(color = colors.town, opacity = byZoom(11.0 to 0.0, 12.0 to 1.0))
         ),
         Layer("landuse-sites",
             src = "sites",
@@ -320,7 +320,7 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
                 "bog", "grassland", "heath", "marsh", "meadow", "string_bog", "wet_meadow",
             )),
             minZoom = 5.0,
-            paint = Fill(color = colors.green, opacity = byZoom(11, 0, 12, 1))
+            paint = Fill(color = colors.green, opacity = byZoom(11.0 to 0.0, 12.0 to 1.0))
         ),
         Layer("landuse-forest",
             src = "land",
@@ -331,7 +331,7 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
                 "swamp", // forest + water = swamp
             )),
             minZoom = 5.0,
-            paint = Fill(color = colors.forest, opacity = byZoom(7, 0, 8, 1))
+            paint = Fill(color = colors.forest, opacity = byZoom(7.0 to 0.0, 8.0 to 1.0))
         ),
         // not rendered: shingle, scree, bare_rock, sand, beach,
 
@@ -362,7 +362,7 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
             src = "pier_lines",
             paint = Line(
                 color = colors.earth,
-                width = byZoom(14, 1, 24, 768)
+                width = byZoom(14.0 to 1.0, 24.0 to 768.0)
             )
         ),
         Layer("pier-areas",
@@ -375,7 +375,7 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
             minZoom = 15.0,
             paint = Fill(
                 color = colors.building,
-                opacity = byZoom(15, 0, 16, 1)
+                opacity = byZoom(15.0 to 0.0, 16.0 to 1.0)
             )
         ),
 
@@ -384,8 +384,8 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
             minZoom = 15.5,
             paint = Line(
                 color = colors.buildingOutline,
-                width = byZoom(16, 1, 24, 128),
-                opacity = byZoom(15.5, 0, 16.0, 1)
+                width = byZoom(16.0 to 1.0, 24.0 to 128.0),
+                opacity = byZoom(15.5 to 0.0, 16.0 to 1.0)
             )
         ),
 
@@ -445,13 +445,16 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
         Layer("oneway-arrows",
             src = "streets",
             filter = listOf(tagIs("oneway", true)),
-            minZoom = 16.0,
+            minZoom = 17.0,
             paint = Symbol(
-                image = "oneway",
+                image = "oneway-arrow",
+                size = byZoom(17.0 to 0.25, 24.0 to 16.0),
                 color = colors.onewayArrow,
                 padding = 5,
                 placement = "line",
-                spacing = 200
+                spacing = byZoom(17.0 to 200.0, 24.0 to 25600.0),
+                rotate = 90,
+                rotationAlignment = "map"
             )
         ),
 
@@ -526,7 +529,7 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
   "transition": { "duration": 300, "delay": 0 },
   "light": { "intensity": 0.2 },
   "glyphs": "https://tiles.versatiles.org/fonts/{fontstack}/{range}.pbf",
-  "sprite": "https://tiles.versatiles.org/sprites/sprites",
+  "sprite": "https://streetcomplete.app/map-osm/sprites",
   "layers": [
     { "id": "background", "type": "background", "paint": {"background-color": "${colors.earth}"}},
     ${layers.joinToString(",\n    ") { it.toJson() }}
@@ -539,7 +542,7 @@ data class Waterway(
     val id: String,
     val filters: List<String>,
     val color: String,
-    val width: List<Pair<Number, Double>>,
+    val width: List<Pair<Double, Double>>,
     val minZoom: Double? = null,
 )
 
@@ -561,7 +564,7 @@ data class Road(
     val filters: List<String>,
     val color: String,
     val colorOutline: String,
-    val width: List<Pair<Number, Double>>,
+    val width: List<Pair<Double, Double>>,
     val minZoom: Double? = null,
 )
 
@@ -576,7 +579,7 @@ fun Road.toLayer(structure: Structure) = Layer(
         cap = "round",
         opacity = when {
             structure == Structure.Tunnel -> "0.25"
-            minZoom != null -> byZoom(minZoom, 0, minZoom+1, 1)
+            minZoom != null -> byZoom(minZoom to 0.0, minZoom + 1.0 to 1.0)
             else -> null
         }
     )
@@ -589,9 +592,9 @@ fun Road.toCasingLayer(structure: Structure) = Layer(
     minZoom = 15.5,
     paint = Line(
         color = colorOutline,
-        width = byZoom(16, 1, 24, 128),
+        width = byZoom(16.0 to 1.0, 24.0 to 128.0),
         join = "round",
-        opacity = byZoom(15.0, 0, 16, 1),
+        opacity = byZoom(15.0 to 0.0, 16.0 to 1.0),
         // cap must not be round for bridges so that the casing is not drawn on top of normal roads
         cap = if (structure == Structure.None) "round" else "butt",
         dashes = if (structure == Structure.Tunnel) "[4, 4]" else null,

@@ -1,13 +1,13 @@
-
 val isPoint = """["==", ["geometry-type"], "Point"]"""
 val isLines = """["==", ["geometry-type"], "LineString"]"""
 val isPolygon = """["==", ["geometry-type"], "Polygon"]"""
 
-fun byZoom(vararg n: Number) =
-    """["interpolate", ["exponential", 2], ["zoom"], ${n.joinToString()}]"""
+fun byZoom(vararg n: Pair<Double, Double>): String = byZoom(n.toList())
 
-fun byZoom(n: List<Pair<Number, Number>>) =
-    byZoom(*n.flatMap { (z,w) -> sequenceOf(z,w) }.toTypedArray())
+fun byZoom(n: Iterable<Pair<Double, Double>>): String {
+    val values = n.flatMap { (z, v) -> listOf(z, v) }.joinToString()
+    return """["interpolate", ["exponential", 2], ["zoom"], $values]"""
+}
 
 fun tagIs(key: String, value: Any) = """["==", ["get", "$key"], ${ if (value is String) "\"$value\"" else value }]"""
 fun tagIsNot(key: String, value: Any) = """["!=", ["get", "$key"], ${ if (value is String) "\"$value\"" else value }]"""
@@ -141,8 +141,11 @@ data class Symbol(
     val color: String? = null,
     val padding: Number? = null,
     val placement: String? = null,
-    val spacing: Number? = null,
+    val spacing: String? = null,
     val opacity: String? = null,
+    val size: String? = null,
+    val rotate: Number? = null,
+    val rotationAlignment: String? = null,
 ) : Paint {
   override fun toJson() = listOfNotNull(
       "\"type\": \"symbol\"",
@@ -155,9 +158,12 @@ data class Symbol(
       "\"layout\": {" +
           listOfNotNull(
               "\"icon-image\": \"$image\"",
+              size?.let { "\"icon-size\": $it" },
               spacing?.let { "\"symbol-spacing\": $it" },
               placement?.let { "\"symbol-placement\": \"$it\"" },
               padding?.let { "\"icon-padding\": $it" },
+              rotate?.let { "\"icon-rotate\": $it"  },
+              rotationAlignment?.let { "\"icon-rotation-alignment\": \"$it\""  },
           ).joinToString() +
           "}",
   ).joinToString()
