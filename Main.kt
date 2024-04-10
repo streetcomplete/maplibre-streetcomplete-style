@@ -458,6 +458,22 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
             )
         ),
 
+        Layer("oneway-arrows-reverse",
+            src = "streets",
+            filter = listOf(tagIs("oneway_reverse", true)),
+            minZoom = 17.0,
+            paint = Symbol(
+                image = "oneway-arrow",
+                size = byZoom(17.0 to 0.25, 24.0 to 16.0),
+                color = colors.onewayArrow,
+                padding = 5,
+                placement = "line",
+                spacing = byZoom(17.0 to 200.0, 24.0 to 25600.0),
+                rotate = -90,
+                rotationAlignment = "map"
+            )
+        ),
+
         Layer("boundaries",
             src = "boundaries",
             filter = listOf(tagIs("admin_level", 2), tagIsNot("maritime", true)),
