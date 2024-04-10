@@ -281,9 +281,9 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
 
     val shoreLine = Line(
         color = colors.waterShore,
-        width = byZoom(15, 1, 18, 4, 24, 256),
-        offset = byZoom(15, 1, 18, 4, 24, 256),
-        opacity = byZoom(15, 0, 18, 1),
+        width = byZoom(15.0 to 1.0, 18.0 to 4.0, 24.0 to 256.0),
+        offset = byZoom(15.0 to 1.0, 18.0 to 4.0, 24.0 to 256.0),
+        opacity = byZoom(15.0 to 0.0, 18.0 to 1.0),
         miterLimit = 6,
     )
 
@@ -304,7 +304,7 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
         Layer("landuse-sites",
             src = "sites",
             minZoom = 14.0,
-            paint = Fill(color = colors.town, opacity = byZoom(14, 0, 15, 1))
+            paint = Fill(color = colors.town, opacity = byZoom(14.0 to 0.0, 15.0 to 1.0))
         ),
         Layer("landuse-green",
             src = "land",
@@ -392,7 +392,7 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
         Layer("dam-lines",
             src = "dam_lines",
             minZoom = 16.0,
-            paint = Line(width = byZoom(16, 4, 24, 768), color = colors.buildingOutline)
+            paint = Line(width = byZoom(16.0 to 4.0, 24.0 to 768.0), color = colors.buildingOutline)
         ),
 
         Layer("dam-areas",
@@ -400,7 +400,7 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
             minZoom = 14.0,
             paint = Fill(
                 color = colors.building,
-                opacity = byZoom(14, 0, 15, 1)
+                opacity = byZoom(14.0 to 0.0, 15.0 to 1.0)
             )
         ),
         Layer("dam-areas-outline",
@@ -408,8 +408,8 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
             minZoom = 14.0,
             paint = Line(
                 color = colors.buildingOutline,
-                width = byZoom(16, 1, 24, 128),
-                opacity = byZoom(14.0, 0, 14.5, 1)
+                width = byZoom(16.0 to 1.0, 24.0 to 128.0),
+                opacity = byZoom(14.0 to 0.0, 14.5 to 1.0)
             )
         ),
 
