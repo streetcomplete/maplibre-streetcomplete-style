@@ -99,7 +99,7 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
     val defaultTextStyle = Text(
         text = coalesceName(),
         size = byZoom(1.0 to 13.0, 24.0 to 64.0),
-        fonts = listOf("Roboto Regular", "Noto Regular"),
+        fonts = listOf("Roboto Regular"),
         color = colors.text,
         outlineColor = colors.textOutline,
         outlineWidth = 2.5,
@@ -436,7 +436,7 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
         Layer("labels-country",
             src = "place_label",
             filter = listOf(tagIs("class", "country")),
-            paint = defaultTextStyle.copy(fonts = listOf("Roboto Bold", "Noto Bold"))
+            paint = defaultTextStyle.copy(fonts = listOf("Roboto Bold"))
         ),
 
         Layer("labels-localities",
