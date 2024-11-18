@@ -447,7 +447,7 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
 
         Layer("labels-housenumbers",
             src = "housenum_label",
-            minZoom = 19.0,
+            minZoom = 18.0,
             paint = defaultTextStyle.copy(
                 text = "[\"get\", \"house_num\"]",
                 sortKey = "15",
