@@ -224,7 +224,7 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
             width = byZoom(16.0 to 1.0, 24.0 to 128.0),
             offset = byZoom(16.0 to -0.5, 24.0 to -64.0),
             opacity = byZoom(16.0 to 0.0, 17.0 to 1.0),
-            dashes = if (structure == Structure.Tunnel) "[4, 4]" else null,
+            dashes = null,
         )
     )
 
@@ -234,8 +234,6 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
         // for roads, first draw the casing (= outline) of all roads
 
         *roads.map { it.toCasingLayer(structure) }.toTypedArray(),
-        // pedestrian area tunnels are not drawn
-        if (structure != Structure.Tunnel) pedestrianAreaCasingLayer(structure) else null,
 
         // , then draw the road color...
 
@@ -243,7 +241,6 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
         // these are kind of "virtual", do only exist for connectivity
         paths.toLayer(structure), // paths do not have a casing
         stepsOverlayLayer(structure),
-        if (structure != Structure.Tunnel)  pedestrianAreaLayer(structure) else null,
         *roads.map { it.toLayer(structure) }.toTypedArray(),
         // pedestrian area tunnels are not drawn
 
@@ -360,6 +357,9 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
             )
         ),
 
+        pedestrianAreaCasingLayer(Structure.None),
+        pedestrianAreaLayer(Structure.None),
+
         *allRoadLayers(Structure.Tunnel).toTypedArray(),
 
         *allRoadLayers(Structure.None).toTypedArray(),
@@ -408,6 +408,9 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
         ),
         rivers.toLayer(Structure.Bridge),
         streams.toLayer(Structure.Bridge),
+
+        pedestrianAreaCasingLayer(Structure.Bridge),
+        pedestrianAreaLayer(Structure.Bridge),
 
         *allRoadLayers(Structure.Bridge).toTypedArray(),
 
