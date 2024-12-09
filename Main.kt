@@ -498,8 +498,7 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
             src = "addresses",
             minZoom = 18.0,
             paint = defaultTextStyle.copy(
-                text = """["coalesce", ["get", "housenumber"], ["get", "housename"]]""",
-                sortKey = "15",
+                text = """["coalesce", ["get", "housenumber"], ["get", "housename"]]"""
             )
         ),
 
@@ -509,7 +508,6 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
             paint = defaultTextStyle.copy(
                 wrap = 25,
                 placement = "line-center",
-                sortKey = "10",
             )
         ),
 
@@ -526,10 +524,7 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
                 tagIsNot("tunnel", true),
                 tagIn("kind", "river", "canal")
             ),
-            paint = waterTextStyle.copy(
-                placement = "line-center",
-                sortKey = "11",
-            )
+            paint = waterTextStyle.copy(placement = "line-center",)
         ),
 
         Layer("labels-streams",
@@ -539,10 +534,7 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
                 tagIsNot("tunnel", true),
                 tagIn("kind", "stream", "ditch", "drain")
             ),
-            paint = waterTextStyle.copy(
-                placement = "line-center",
-                sortKey = "12"
-            )
+            paint = waterTextStyle.copy(placement = "line-center")
         ),
 
     )
