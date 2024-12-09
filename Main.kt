@@ -545,7 +545,7 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
   "sources": {
     "shortbread-v1": {
       "type": "vector",
-      "url": "https://demo.tilekiln.xyz/shortbread_v1/tilejson.json"
+      "url": "https://vector.openstreetmap.org/shortbread_v1/tilejson.json"
     }
   },
   "transition": { "duration": 300, "delay": 0 },
