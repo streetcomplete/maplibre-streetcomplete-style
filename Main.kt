@@ -506,7 +506,9 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
   "sources": {
     "jawg-streets": {
       "type": "vector",
-      "url": "https://api.jawg.io/styles/jawg-streets.json?access-token=$accessToken"
+      "tiles": ["https://tile.jawg.io/streets-v2+hillshade-v1/{z}/{x}/{y}.pbf?access-token=$accessToken"],
+      "attribution": "<a href='https://www.openstreetmap.org/copyright' title='OpenStreetMap is open data licensed under ODbL' target='_blank' class='osm-attrib'>&copy; OSM contributors</a> | <a href='https://jawg.io?utm_medium=map&utm_source=attribution' title='Tiles Courtesy of Jawg Maps' target='_blank' class='jawg-attrib'>&copy; <b>Jawg</b>Maps</a>",
+      "maxzoom": 16
     }
   },
   "transition": { "duration": 300, "delay": 0 },
