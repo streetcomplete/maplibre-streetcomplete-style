@@ -268,9 +268,9 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
             minZoom = 5.0,
             paint = Fill(color = colors.green, opacity = byZoom(5.0 to 0.0, 6.0 to 1.0))
         ),
-        Layer("landuse-pitch-outline",
+        Layer("landuse-pitch-park-outline",
             src = "landuse",
-            filter = listOf(tagIs("class", "pitch")),
+            filter = listOf(tagIn("class", "pitch", "park")),
             minZoom = 16.0,
             paint = Line(
                 color = colors.earth,
