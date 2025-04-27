@@ -65,7 +65,7 @@ fun main(args: Array<String>) {
         else arg[0] to arg[1]
     }.associate { it }
 
-    val accessToken = argMap["access_token"] ?: ""
+    val accessToken = argMap["access_token"] ?: "XQYxWyY9JsVlwq0XYXqB8OO4ttBTNxm46ITHHwPj5F6CX4JaaSMBkvmD8kCqn7z7"
     val languages = argMap["languages"]?.split(",") ?: emptyList()
 
     File("demo/streetcomplete.json").writeText(createStyle(
