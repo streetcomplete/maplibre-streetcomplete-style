@@ -503,6 +503,9 @@ fun createStyle(name: String, accessToken: String, languages: List<String>, colo
     return """{
   "version": 8,
   "name": "$name",
+  "font-faces": {
+    "Roboto Regular": "https://cdn.jsdelivr.net/gh/notofonts/noto-cjk@main/Sans/Variable/TTF/Subset/NotoSansJP-VF.ttf"
+  },
   "sources": {
     "jawg-streets": {
       "type": "vector",
