@@ -1,3 +1,5 @@
+This repository is archived because StreetComplete now defines its base map style in the Kotlin DSL of maplibre-compose.
+
 Small Kotlin app that creates the MapLibre StreetComplete map style.
 
 * Edit the `Main.kt` script that defines the mapstyles
